@@ -3,340 +3,380 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6f7f2">
-  <meta name="description" content="A simple cooking reference for breakfast, main meals, and snacks.">
+  <meta name="theme-color" content="#101613">
+  <meta name="description" content="A minimal ingredient and portion reference for everyday cooking.">
   <title>Kitchen</title>
   <style>
     :root {
-      color-scheme: light;
-      --bg: #f6f7f2;
-      --white: #fff;
-      --ink: #23382c;
-      --muted: #65746b;
-      --line: #e5eae1;
-      --green: #245b43;
-      --soft: #eaf1e9;
+      color-scheme: dark;
+      --background: #101613;
+      --surface: #1b2420;
+      --text: #eef4ee;
+      --subtle: #a2b3a8;
+      --green: #b2e8c4;
+      --line: #324039;
+      --soft: #263c30;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-    button:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid #8cad99; outline-offset: 2px; }
-    [hidden] { display: none !important; }
-    .shell { max-width: 920px; margin: auto; padding: 30px 24px 60px; }
-    .site-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
-    .brand { font-weight: 800; font-size: 1.65rem; letter-spacing: -.055em; line-height: 1.1; }
-    .tabs { display: flex; gap: 4px; padding: 5px; border-radius: 13px; background: #e9eee7; }
-    .tab { border: 0; border-radius: 9px; background: transparent; padding: 10px 15px; color: #607167; font-size: .86rem; font-weight: 650; white-space: nowrap; }
-    .tab[aria-selected="true"] { color: var(--green); background: var(--white); box-shadow: 0 1px 6px #1c402511; }
-    .tab:hover:not([aria-selected="true"]) { background: #ffffff8c; }
-    .page-heading { margin: 0 0 20px; }
-    h1 { font-size: clamp(1.48rem, 3.5vw, 1.9rem); font-weight: 750; line-height: 1.22; letter-spacing: -.05em; margin: 0; }
-    .portion-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--white); border: 1px solid var(--line); border-radius: 15px; padding: 11px 15px 11px 18px; margin-bottom: 12px; }
-    .portion-label { font-weight: 720; font-size: .94rem; }
-    .stepper { flex-shrink: 0; display: flex; align-items: center; background: #f7f9f6; border: 1px solid #e1e7dd; border-radius: 11px; padding: 3px; }
-    .stepper button { width: 38px; height: 39px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: var(--green); font-size: 1.5rem; line-height: 1; }
-    .stepper button:hover:not(:disabled) { background: var(--soft); }
-    .stepper button:disabled { color: #b5c2b6; cursor: default; }
-    .stepper input { border: 0; background: transparent; border-radius: 4px; color: var(--ink); width: 51px; padding: 5px 1px; text-align: center; font-size: 1.2rem; font-weight: 800; font-variant-numeric: tabular-nums; appearance: textfield; -moz-appearance: textfield; }
-    .stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    .oven { display: flex; align-items: center; justify-content: space-around; padding: 14px 10px; gap: 4px; background: var(--soft); border-radius: 14px; margin-bottom: 24px; }
-    .oven > div { text-align: center; flex: 1; }
-    .oven > div + div { border-left: 1px solid #cfded1; }
-    .oven strong { display: block; color: var(--green); font-size: 1.2rem; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-    .oven span { color: #5b7563; font-size: .74rem; }
-    .layout { display: grid; grid-template-columns: 1.08fr .92fr; align-items: start; gap: 18px; }
-    .column { display: grid; align-content: start; gap: 18px; min-width: 0; }
-    .section-title { font-size: 1rem; font-weight: 760; margin: 0 0 10px; letter-spacing: -.025em; }
-    .sheet { border: 1px solid var(--line); background: var(--white); border-radius: 15px; overflow: hidden; }
-    .ingredient-group { padding: 15px 18px 12px; }
-    .ingredient-group + .ingredient-group { border-top: 1px solid var(--line); }
-    .ingredient-group h3 { margin: 0 0 7px; font-size: .91rem; font-weight: 760; color: var(--green); letter-spacing: -.015em; }
-    .ingredients { padding: 0; margin: 0; list-style: none; }
-    .ingredients li { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; padding: 5px 0; line-height: 1.38; font-size: .88rem; }
-    .name { color: #46564b; min-width: 0; }
-    .amount { color: var(--ink); text-align: right; font-weight: 740; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums; }
-    .instructions { padding: 6px 18px; }
-    .instruction { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 12px; padding: 14px 0; }
-    .instruction + .instruction { border-top: 1px solid var(--line); }
-    .number { font-size: .84rem; color: var(--green); font-weight: 800; line-height: 1.45; }
-    .instruction p { margin: 0; font-size: .89rem; line-height: 1.5; color: #46564b; }
-    .instruction b { color: var(--ink); font-weight: 750; }
-    .note { color: var(--muted); font-size: .8rem; line-height: 1.5; margin: 10px 2px 0; }
-    .blend { border: 1px solid var(--line); background: var(--white); border-radius: 13px; padding: 13px 17px; }
-    .blend summary { cursor: pointer; color: var(--green); font-size: .88rem; font-weight: 740; }
-    .blend ul { color: #526257; margin: 10px 0 0 19px; padding: 0; font-size: .84rem; line-height: 1.9; }
-    .small-heading { color: var(--muted); font-size: .8rem; font-weight: 750; letter-spacing: .035em; text-transform: uppercase; margin: 0 0 9px; }
-    .sardine { padding: 16px 18px; }
-    .sardine h3 { margin: 0 0 5px; color: var(--green); font-size: .93rem; }
-    .sardine p { margin: 0; font-size: .88rem; color: #46564b; line-height: 1.5; }
-    @media (max-width: 700px) {
-      .shell { padding: 22px 16px 48px; max-width: 520px; }
-      .site-header { display: block; margin-bottom: 23px; }
-      .brand { font-size: 1.65rem; margin-bottom: 17px; }
-      .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .tab { padding: 12px 6px; }
-      .layout { grid-template-columns: 1fr; gap: 23px; }
-      .column { gap: 18px; }
-      .oven { margin-bottom: 22px; }
-      .page-heading { margin-bottom: 16px; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: radial-gradient(ellipse 80% 320px at 50% -120px, #24392e 0%, transparent 100%), var(--background);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
-    @media (max-width: 350px) {
-      .portion-row { padding: 10px; }
-      .stepper button { width: 33px; }
-      .stepper input { width: 41px; }
-      .oven strong { font-size: 1.1rem; }
-      .oven span { font-size: .68rem; }
+    button, input { font: inherit; }
+    button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible { outline: 2px solid #c4fad1; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    .app { width: min(100%, 510px); margin: 0 auto; padding: 19px 16px 24px; }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4px;
+      padding: 4px;
+      background: #1b2520;
+      border: 1px solid #2c3a32;
+      border-radius: 13px;
+      margin-bottom: 19px;
+    }
+    .tab {
+      min-height: 38px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: #acbcb0;
+      font-size: .88rem;
+      font-weight: 650;
+      white-space: nowrap;
+      transition: background .15s ease, color .15s ease;
+    }
+    .tab[aria-selected="true"] {
+      background: #324a3b;
+      color: #defbe4;
+      box-shadow: inset 0 0 0 1px #446750;
+    }
+    .tab:hover:not([aria-selected="true"]) { background: #28362d; color: var(--text); }
+    .heading-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+    h1 { margin: 0; font-size: clamp(1.25rem, 4.9vw, 1.5rem); font-weight: 760; letter-spacing: -.045em; line-height: 1.18; }
+    .heading-plain { margin: 0 0 14px; }
+    .portion-control { flex: none; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .portion-label { color: var(--subtle); font-size: .67rem; font-weight: 750; letter-spacing: .055em; text-transform: uppercase; }
+    .stepper { display: flex; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; padding: 2px; }
+    .stepper button { border: 0; background: transparent; width: 36px; height: 35px; color: var(--green); border-radius: 8px; font-size: 1.45rem; line-height: 1; }
+    .stepper button:hover:not(:disabled), .stepper button:active:not(:disabled) { background: var(--soft); }
+    .stepper button:disabled { color: #607268; cursor: default; }
+    .stepper input {
+      width: 43px; padding: 4px 0;
+      border: 0; border-radius: 3px; background: transparent;
+      color: var(--text); text-align: center;
+      font-size: 1.05rem; font-weight: 770;
+      font-variant-numeric: tabular-nums;
+      appearance: textfield; -moz-appearance: textfield;
+    }
+    .stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { appearance: none; -webkit-appearance: none; margin: 0; }
+    .oven {
+      display: flex; align-items: center; justify-content: space-between; gap: 9px;
+      padding: 10px 13px;
+      border: 1px solid #395744;
+      border-radius: 11px;
+      background: linear-gradient(115deg, #233b2d, #1d3227);
+      color: #d7f1df;
+      margin-bottom: 13px;
+    }
+    .oven-label { font-size: .82rem; font-weight: 560; line-height: 1.2; }
+    .oven-metrics { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .oven strong { color: #bcf0cd; font-size: .98rem; font-variant-numeric: tabular-nums; letter-spacing: -.025em; }
+    .sheet { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: 0 8px 32px #00000014; }
+    .ingredient-list { list-style: none; margin: 0; padding: 3px 15px; }
+    .ingredient {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+      min-height: 35px; padding: 7px 0;
+      font-size: .94rem; line-height: 1.38;
+    }
+    .ingredient + .ingredient { border-top: 1px solid #2b3731; }
+    .ingredient-name { color: #c3d0c7; min-width: 0; }
+    .ingredient-amount { color: #f6faf3; text-align: right; white-space: nowrap; flex: none; font-weight: 740; font-variant-numeric: tabular-nums; }
+    .ingredient.oil { display: block; }
+    .oil-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .oil-note { color: var(--subtle); font-size: .76rem; line-height: 1.35; margin: 3px 0 0; }
+    .subheading { padding: 12px 15px 4px; margin: 0; color: var(--green); font-size: .79rem; font-weight: 760; }
+    .subheading:not(:first-child) { border-top: 1px solid var(--line); }
+    .subheading + .ingredient-list { padding-top: 0; padding-bottom: 6px; }
+    .subheading + .ingredient-list .ingredient:first-child { border-top: 0; }
+    .sardine-brand { padding: 0 15px 14px; color: var(--subtle); font-size: .84rem; line-height: 1.4; }
+    .blend-trigger {
+      display: inline-flex; align-items: center; gap: 7px;
+      margin: -5px -7px; padding: 5px 7px;
+      border: 0; border-radius: 7px; background: transparent;
+      color: var(--green); font-size: inherit; font-weight: 650;
+      text-align: left;
+    }
+    .blend-trigger:hover, .blend-trigger:active { background: var(--soft); }
+    .blend-icon {
+      display: inline-grid; place-items: center;
+      width: 17px; height: 17px; border: 1.5px solid currentColor;
+      border-radius: 50%; font-size: .73rem; font-weight: 750; line-height: 1;
+    }
+    .blend-dialog {
+      width: min(340px, calc(100% - 32px));
+      max-height: calc(100dvh - 32px); overflow-y: auto;
+      margin: auto; padding: 23px 22px 20px;
+      border: 1px solid #476050; border-radius: 18px;
+      background: #202d25; color: var(--text);
+      box-shadow: 0 24px 75px #0009;
+    }
+    .blend-dialog::backdrop { background: #030a07bf; backdrop-filter: blur(3px); }
+    .dialog-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+    .dialog-top h2 { margin: 0; font-size: 1.2rem; letter-spacing: -.035em; }
+    .dialog-close {
+      display: grid; place-items: center; flex: none;
+      width: 34px; height: 34px; border: 0; border-radius: 9px;
+      background: var(--soft); color: var(--green);
+      font-size: 1.5rem; line-height: 1;
+    }
+    .dialog-close:hover { background: #315541; }
+    .blend-list { list-style: none; margin: 0; padding: 0; }
+    .blend-list li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 11px 0; font-size: .94rem; }
+    .blend-list li + li { border-top: 1px solid var(--line); }
+    .blend-list span { color: #c3d0c7; }
+    .blend-list strong { font-variant-numeric: tabular-nums; white-space: nowrap; color: #f6faf3; }
+    @media (max-height: 730px) and (max-width: 600px) {
+      .app { padding-top: 11px; padding-bottom: 12px; }
+      .tabs { margin-bottom: 11px; }
+      .heading-row { margin-bottom: 7px; }
+      .oven { margin-bottom: 9px; padding-top: 8px; padding-bottom: 8px; }
+      .ingredient { min-height: 32px; padding: 5px 0; }
+    }
+    @media (max-height: 600px) and (max-width: 345px) {
+      .ingredient { min-height: 30px; padding: 4px 0; }
+    }
+    @media (max-width: 345px) {
+      .app { padding-left: 11px; padding-right: 11px; }
+      .heading-row h1 { font-size: 1.2rem; }
+      .ingredient-list { padding-left: 12px; padding-right: 12px; }
+      .ingredient { font-size: .91rem; }
+      .oven-label { font-size: .74rem; }
+      .oven-metrics { gap: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tab { transition: none; }
     }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <header class="site-header">
-      <div class="brand">Kitchen</div>
-      <nav class="tabs" role="tablist" aria-label="Choose recipe">
-        <button type="button" class="tab" id="tab-main" role="tab" aria-controls="view-main" aria-selected="true" data-tab="main">Main meal</button>
-        <button type="button" class="tab" id="tab-breakfast" role="tab" aria-controls="view-breakfast" aria-selected="false" data-tab="breakfast">Breakfast</button>
-        <button type="button" class="tab" id="tab-snack" role="tab" aria-controls="view-snack" aria-selected="false" data-tab="snack">Snack</button>
-      </nav>
-    </header>
+  <main class="app">
+    <nav class="tabs" role="tablist" aria-label="Recipes">
+      <button class="tab" type="button" id="tab-main" role="tab" aria-controls="page-main" aria-selected="true" data-tab="main">Main meal</button>
+      <button class="tab" type="button" id="tab-breakfast" role="tab" aria-controls="page-breakfast" aria-selected="false" data-tab="breakfast">Breakfast</button>
+      <button class="tab" type="button" id="tab-snack" role="tab" aria-controls="page-snack" aria-selected="false" data-tab="snack">Snack</button>
+    </nav>
 
-    <section id="view-main" role="tabpanel" aria-labelledby="tab-main">
-      <div class="page-heading"><h1>Chicken, rice &amp; bean bowl</h1></div>
-      <div class="portion-row">
-        <label for="portion-input" class="portion-label">Portions</label>
-        <div class="stepper">
-          <button type="button" id="minus" aria-label="Decrease portions">−</button>
-          <input id="portion-input" aria-label="Number of portions" type="number" min="1" max="100" step="1" inputmode="numeric" value="1">
-          <button type="button" id="plus" aria-label="Increase portions">+</button>
-        </div>
-      </div>
-      <div class="oven" aria-label="Roast chicken and vegetables at 425 degrees Fahrenheit for about 25 minutes, with chicken cooked to 165 degrees Fahrenheit internally">
-        <div><strong>425°F</strong><span>Oven</span></div>
-        <div><strong>~25 min</strong><span>Chicken + vegetables</span></div>
-        <div><strong>165°F</strong><span>Chicken inside</span></div>
-      </div>
-      <div class="layout">
-        <div>
-          <h2 class="section-title">Ingredients</h2>
-          <div id="main-ingredients" class="sheet" aria-live="polite" aria-relevant="text"></div>
-        </div>
-        <div class="column">
-          <div>
-            <h2 class="section-title">Instructions</h2>
-            <div class="sheet instructions">
-              <div class="instruction"><span class="number">1.</span><p><b>Roast:</b> Toss chicken and vegetables separately with their listed oil, seasoning, and salt. Roast on separate trays. Check chicken reaches 165°F.</p></div>
-              <div class="instruction"><span class="number">2.</span><p><b>Grains:</b> Cook rice and bulgur separately, following package directions.</p></div>
-              <div class="instruction"><span class="number">3.</span><p><b>Stovetop:</b> Heat spinach and drain excess water. Simmer beans with tomatoes (including liquid), oil, seasoning, and salt.</p></div>
-              <div class="instruction"><span class="number">4.</span><p><b>Portion:</b> Divide evenly into <span id="container-count">1 container</span>.</p></div>
-            </div>
-            <p class="note">Refrigerate up to 3–4 days or freeze. Reheat to 165°F.</p>
+    <section id="page-main" role="tabpanel" aria-labelledby="tab-main">
+      <div class="heading-row">
+        <h1>Chicken, rice &amp; beans</h1>
+        <div class="portion-control">
+          <label class="portion-label" for="portions">Portions</label>
+          <div class="stepper">
+            <button type="button" id="minus" aria-label="Decrease portions">−</button>
+            <input type="number" id="portions" value="1" min="1" max="100" step="1" inputmode="numeric" aria-label="Portions">
+            <button type="button" id="plus" aria-label="Increase portions">+</button>
           </div>
-          <details class="blend">
-            <summary>Seasoning blend ratio</summary>
-            <ul>
-              <li>3 parts garlic powder</li>
-              <li>3 parts smoked paprika</li>
-              <li>2 parts ground cumin</li>
-              <li>1 part dried oregano</li>
-              <li>1 part black pepper</li>
-            </ul>
-          </details>
         </div>
+      </div>
+      <div class="oven" aria-label="Chicken and vegetables: oven at 425 degrees Fahrenheit for approximately 25 minutes">
+        <span class="oven-label">Chicken + vegetables</span>
+        <div class="oven-metrics"><strong>425°F</strong><strong>~25 min</strong></div>
+      </div>
+      <div class="sheet">
+        <ul id="main-list" class="ingredient-list" aria-live="polite"></ul>
       </div>
     </section>
 
-    <section id="view-breakfast" role="tabpanel" aria-labelledby="tab-breakfast" hidden>
-      <div class="page-heading"><h1>Breakfast</h1></div>
-      <div class="layout">
-        <div>
-          <h2 class="section-title">Ingredients</h2>
-          <div class="sheet">
-            <div class="ingredient-group">
-              <h3>Egg &amp; oat scramble</h3>
-              <ul class="ingredients">
-                <li><span class="name">Large eggs</span><span class="amount">3</span></li>
-                <li><span class="name">Dry rolled oats</span><span class="amount">50 g</span></li>
-                <li><span class="name">Whole milk</span><span class="amount">60 mL</span></li>
-                <li><span class="name">Salt &amp; pepper</span><span class="amount">To taste</span></li>
-                <li><span class="name">Hot sauce</span><span class="amount">Optional</span></li>
-              </ul>
-            </div>
-            <div class="ingredient-group">
-              <h3>Yogurt &amp; fruit</h3>
-              <ul class="ingredients">
-                <li><span class="name">Plain nonfat Greek yogurt</span><span class="amount">150 g</span></li>
-                <li><span class="name">Frozen mixed berries (thawed)</span><span class="amount">100 g</span></li>
-                <li><span class="name">Chia seeds</span><span class="amount">10 g</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h2 class="section-title">Instructions</h2>
-          <div class="sheet instructions">
-            <div class="instruction"><span class="number">1.</span><p>Mix eggs, oats, milk, and seasoning. <b>Microwave</b> in short intervals, stirring until the eggs are cooked.</p></div>
-            <div class="instruction"><span class="number">2.</span><p>Combine yogurt, thawed berries, and chia seeds in a separate bowl.</p></div>
-          </div>
-        </div>
+    <section id="page-breakfast" role="tabpanel" aria-labelledby="tab-breakfast" hidden>
+      <h1 class="heading-plain">Breakfast</h1>
+      <div class="sheet">
+        <h2 class="subheading">Egg &amp; oat scramble</h2>
+        <ul class="ingredient-list">
+          <li class="ingredient"><span class="ingredient-name">Large eggs</span><span class="ingredient-amount">3</span></li>
+          <li class="ingredient"><span class="ingredient-name">Rolled oats (dry)</span><span class="ingredient-amount">50 g</span></li>
+          <li class="ingredient"><span class="ingredient-name">Whole milk</span><span class="ingredient-amount">60 mL</span></li>
+          <li class="ingredient"><span class="ingredient-name">Salt &amp; pepper</span><span class="ingredient-amount">To taste</span></li>
+          <li class="ingredient"><span class="ingredient-name">Hot sauce</span><span class="ingredient-amount">Optional</span></li>
+        </ul>
+        <h2 class="subheading">Yogurt &amp; fruit</h2>
+        <ul class="ingredient-list">
+          <li class="ingredient"><span class="ingredient-name">Plain nonfat Greek yogurt</span><span class="ingredient-amount">150 g</span></li>
+          <li class="ingredient"><span class="ingredient-name">Frozen mixed berries (thawed)</span><span class="ingredient-amount">100 g</span></li>
+          <li class="ingredient"><span class="ingredient-name">Chia seeds</span><span class="ingredient-amount">10 g</span></li>
+        </ul>
       </div>
     </section>
 
-    <section id="view-snack" role="tabpanel" aria-labelledby="tab-snack" hidden>
-      <div class="page-heading"><h1>Snack</h1></div>
-      <div class="layout">
-        <div>
-          <h2 class="section-title">Daily</h2>
-          <div class="sheet ingredient-group">
-            <h3>Milk &amp; almonds</h3>
-            <ul class="ingredients">
-              <li><span class="name">Fairlife whole milk</span><span class="amount">250 mL</span></li>
-              <li><span class="name">Almonds (raw or dry-roasted, unsalted)</span><span class="amount">28 g</span></li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <h2 class="section-title">Twice weekly</h2>
-          <div class="sheet sardine">
-            <h3>Sardines</h3>
-            <p>Wild Planet Wild Pacific Sardines in Extra Virgin Olive Oil, with skin and bones. Eat straight from the can.</p>
-          </div>
-        </div>
+    <section id="page-snack" role="tabpanel" aria-labelledby="tab-snack" hidden>
+      <h1 class="heading-plain">Snack</h1>
+      <div class="sheet">
+        <h2 class="subheading">Daily</h2>
+        <ul class="ingredient-list">
+          <li class="ingredient"><span class="ingredient-name">Whole milk</span><span class="ingredient-amount">250 mL</span></li>
+          <li class="ingredient"><span class="ingredient-name">Almonds (unsalted)</span><span class="ingredient-amount">28 g</span></li>
+        </ul>
+        <h2 class="subheading">Twice weekly</h2>
+        <ul class="ingredient-list">
+          <li class="ingredient"><span class="ingredient-name">Sardines</span><span class="ingredient-amount">1 can</span></li>
+        </ul>
+        <div class="sardine-brand">Wild Planet Wild Pacific Sardines in Extra Virgin Olive Oil (with skin and bones)</div>
       </div>
     </section>
   </main>
 
+  <dialog id="blend-dialog" class="blend-dialog" aria-labelledby="blend-title">
+    <div class="dialog-top">
+      <h2 id="blend-title">Seasoning blend</h2>
+      <button type="button" class="dialog-close" id="close-blend" aria-label="Close seasoning blend">×</button>
+    </div>
+    <ul class="blend-list">
+      <li><span>Garlic powder</span><strong>3 parts</strong></li>
+      <li><span>Smoked paprika</span><strong>3 parts</strong></li>
+      <li><span>Ground cumin</span><strong>2 parts</strong></li>
+      <li><span>Dried oregano</span><strong>1 part</strong></li>
+      <li><span>Black pepper</span><strong>1 part</strong></li>
+    </ul>
+  </dialog>
+
   <script>
     'use strict';
-    const STORAGE_KEY = 'kitchen-guide-v1';
-    const MIN_PORTIONS = 1;
-    const MAX_PORTIONS = 100;
-    const groups = [
-      { title: 'Roasted chicken', ingredients: [
-        ['Chicken thighs (raw, boneless & skinless)', 200, 'g'],
-        ['Olive oil', 3.75, 'mL'],
-        ['Seasoning blend', 0.5, 'tsp'],
-        ['Salt', null, 'To taste']
-      ] },
-      { title: 'Rice & bulgur', ingredients: [
-        ['White basmati rice (dry)', 40, 'g'],
-        ['Bulgur wheat (dry)', 40, 'g']
-      ] },
-      { title: 'Roasted vegetables', ingredients: [
-        ['Frozen broccoli', 100, 'g'],
-        ['Fresh chopped carrots', 75, 'g'],
-        ['Olive oil', 7.5, 'mL'],
-        ['Seasoning blend', 0.25, 'tsp'],
-        ['Salt', null, 'To taste']
-      ] },
-      { title: 'Spinach', ingredients: [
-        ['Frozen spinach', 50, 'g']
-      ] },
-      { title: 'Beans & tomatoes', ingredients: [
-        ['Canned black beans (drained & rinsed)', 100, 'g'],
-        ['Canned diced tomatoes (incl. liquid)', 75, 'g'],
-        ['Olive oil', 3.75, 'mL'],
-        ['Seasoning blend', 0.25, 'tsp'],
-        ['Salt', null, 'To taste']
-      ] }
+    const KEY = 'kitchen-guide-v1';
+    const MIN = 1;
+    const MAX = 100;
+    const ingredients = [
+      ['Chicken thighs (raw)', 200, 'g'],
+      ['Basmati rice (dry)', 40, 'g'],
+      ['Bulgur wheat (dry)', 40, 'g'],
+      ['Frozen broccoli', 100, 'g'],
+      ['Chopped carrots', 75, 'g'],
+      ['Frozen spinach', 50, 'g'],
+      ['Black beans (drained)', 100, 'g'],
+      ['Diced tomatoes (+ liquid)', 75, 'g'],
+      ['Seasoning blend', 1, 'tsp'],
+      ['Salt', null, 'To taste'],
+      ['Olive oil', 1, 'tbsp']
     ];
-
-    const input = document.getElementById('portion-input');
+    const list = document.getElementById('main-list');
+    const blendDialog = document.getElementById('blend-dialog');
+    const closeBlend = document.getElementById('close-blend');
+    const input = document.getElementById('portions');
     const minus = document.getElementById('minus');
     const plus = document.getElementById('plus');
-    const mount = document.getElementById('main-ingredients');
-    const tabs = [...document.querySelectorAll('[data-tab]')];
+    const tabs = Array.from(document.querySelectorAll('[data-tab]'));
     let portions = 1;
     let activeTab = 'main';
 
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      if (Number.isInteger(saved.portions) && saved.portions >= MIN_PORTIONS && saved.portions <= MAX_PORTIONS) portions = saved.portions;
+      const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+      if (Number.isInteger(saved.portions) && saved.portions >= MIN && saved.portions <= MAX) portions = saved.portions;
       if (['main', 'breakfast', 'snack'].includes(saved.tab)) activeTab = saved.tab;
-    } catch (_) { /* Works without storage. */ }
+    } catch (_) { /* Local storage is optional. */ }
 
-    function save() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ portions, tab: activeTab })); } catch (_) { /* Optional. */ }
+    const format = n => n.toLocaleString('en-US');
+    function persist() {
+      try { localStorage.setItem(KEY, JSON.stringify({ portions, tab: activeTab })); } catch (_) {}
     }
-    function numberText(n) {
-      return Number(n.toFixed(2)).toLocaleString('en-US', { maximumFractionDigits: 2 });
+    function makeText(tag, className, value) {
+      const el = document.createElement(tag);
+      el.className = className;
+      el.textContent = value;
+      return el;
     }
-    function teaspoonText(n) {
-      const whole = Math.floor(n);
-      const fraction = Math.round((n - whole) * 100) / 100;
-      const names = { '0.25': '¼', '0.5': '½', '0.75': '¾' };
-      const suffix = names[String(fraction)];
-      return (suffix ? `${whole ? whole + ' ' : ''}${suffix}` : numberText(n)) + ' tsp';
-    }
-    function renderIngredients(syncInput = true) {
-      mount.replaceChildren();
-      for (const group of groups) {
-        const section = document.createElement('section');
-        section.className = 'ingredient-group';
-        const title = document.createElement('h3');
-        title.textContent = group.title;
-        const list = document.createElement('ul');
-        list.className = 'ingredients';
-        for (const [name, quantity, unit] of group.ingredients) {
-          const li = document.createElement('li');
-          const label = document.createElement('span');
-          label.className = 'name';
-          label.textContent = name;
-          const amount = document.createElement('span');
-          amount.className = 'amount';
-          amount.textContent = quantity === null ? unit : unit === 'tsp' ? teaspoonText(quantity * portions) : `${numberText(quantity * portions)} ${unit}`;
-          li.append(label, amount);
-          list.append(li);
+    function render() {
+      const fragment = document.createDocumentFragment();
+      for (const [name, quantity, unit] of ingredients) {
+        const li = document.createElement('li');
+        li.className = 'ingredient' + (name === 'Olive oil' ? ' oil' : '');
+        const amount = quantity === null ? unit : `${format(quantity * portions)} ${unit}`;
+        if (name === 'Olive oil') {
+          const row = makeText('div', 'oil-row', '');
+          row.append(makeText('span', 'ingredient-name', name), makeText('span', 'ingredient-amount', amount));
+          li.append(row, makeText('p', 'oil-note', 'Total, divided among chicken, vegetables, beans & tomatoes'));
+        } else if (name === 'Seasoning blend') {
+          const trigger = document.createElement('button');
+          trigger.type = 'button';
+          trigger.className = 'blend-trigger';
+          trigger.setAttribute('aria-label', 'Seasoning blend. Show ingredient ratios');
+          trigger.setAttribute('aria-haspopup', 'dialog');
+          trigger.append(document.createTextNode(name), makeText('span', 'blend-icon', 'i'));
+          trigger.querySelector('.blend-icon').setAttribute('aria-hidden', 'true');
+          li.append(trigger, makeText('span', 'ingredient-amount', amount));
+        } else {
+          li.append(makeText('span', 'ingredient-name', name), makeText('span', 'ingredient-amount', amount));
         }
-        section.append(title, list);
-        mount.append(section);
+        fragment.append(li);
       }
-      document.getElementById('container-count').textContent = `${portions} ${portions === 1 ? 'container' : 'containers'}`;
-      if (syncInput) input.value = String(portions);
-      minus.disabled = portions <= MIN_PORTIONS;
-      plus.disabled = portions >= MAX_PORTIONS;
+      list.replaceChildren(fragment);
+      input.value = String(portions);
+      minus.disabled = portions === MIN;
+      plus.disabled = portions === MAX;
     }
-    function setPortions(value, syncInput = true) {
-      const parsed = Number(value);
-      if (!Number.isFinite(parsed)) return;
-      portions = Math.max(MIN_PORTIONS, Math.min(MAX_PORTIONS, Math.round(parsed)));
-      renderIngredients(syncInput);
-      save();
+    function setPortions(number) {
+      if (!Number.isFinite(number)) return;
+      portions = Math.min(MAX, Math.max(MIN, Math.round(number)));
+      render();
+      persist();
     }
     function selectTab(name, focus = false) {
       if (!['main', 'breakfast', 'snack'].includes(name)) return;
       activeTab = name;
       for (const tab of tabs) {
-        const selected = tab.dataset.tab === name;
+        const selected = name === tab.dataset.tab;
         tab.setAttribute('aria-selected', String(selected));
         tab.tabIndex = selected ? 0 : -1;
-        document.getElementById('view-' + tab.dataset.tab).hidden = !selected;
-        if (focus && selected) tab.focus();
+        document.getElementById('page-' + tab.dataset.tab).hidden = !selected;
+        if (selected && focus) tab.focus();
       }
-      save();
+      persist();
     }
-    tabs.forEach((tab, i) => {
-      tab.addEventListener('click', () => selectTab(tab.dataset.tab));
-      tab.addEventListener('keydown', e => {
-        let next = null;
-        if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
-        if (e.key === 'ArrowLeft') next = (i + tabs.length - 1) % tabs.length;
-        if (e.key === 'Home') next = 0;
-        if (e.key === 'End') next = tabs.length - 1;
-        if (next !== null) { e.preventDefault(); selectTab(tabs[next].dataset.tab, true); }
-      });
+    // Use event delegation so the pop-up still works after any portion change.
+    list.addEventListener('click', event => {
+      if (event.target.closest('.blend-trigger')) blendDialog.showModal();
+    });
+    closeBlend.addEventListener('click', () => blendDialog.close());
+    blendDialog.addEventListener('click', event => {
+      // Close when tapping the shaded area outside the dialog.
+      if (event.target !== blendDialog) return;
+      const r = blendDialog.getBoundingClientRect();
+      if (event.clientX < r.left || event.clientX > r.right ||
+          event.clientY < r.top || event.clientY > r.bottom) blendDialog.close();
     });
     minus.addEventListener('click', () => setPortions(portions - 1));
     plus.addEventListener('click', () => setPortions(portions + 1));
     input.addEventListener('focus', () => input.select());
     input.addEventListener('input', () => {
-      if (/^\d+$/.test(input.value)) setPortions(input.value, false);
+      if (/^\d+$/.test(input.value) && Number(input.value) >= MIN && Number(input.value) <= MAX) {
+        portions = Number(input.value);
+        // Keep the user's in-progress entry intact while updating the list.
+        const entered = input.value;
+        render();
+        input.value = entered;
+        persist();
+      }
     });
-    input.addEventListener('change', () => setPortions(input.value || portions));
+    input.addEventListener('change', () => setPortions(Number(input.value) || portions));
     input.addEventListener('blur', () => { input.value = String(portions); });
     input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
-
-    renderIngredients();
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => selectTab(tab.dataset.tab));
+      tab.addEventListener('keydown', e => {
+        let next = null;
+        if (e.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (e.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        if (next !== null) { e.preventDefault(); selectTab(tabs[next].dataset.tab, true); }
+      });
+    });
+    render();
     selectTab(activeTab);
   </script>
 </body>
